@@ -1,5 +1,7 @@
 import streamlit as st
 from utils.pdf_reader import extract_text_from_pdf
+from services.gemini_service import review_resume
+
 st.set_page_config(
     page_title="AI Resume Reviewer",
     page_icon="📄",
@@ -28,3 +30,10 @@ if uploaded_file:
         resume_text,
         height=300
     )
+
+    if st.button("Review Resume with AI"):
+        with st.spinner("Analyzing your resume..."):
+            review = review_resume(resume_text)
+
+        st.subheader("🤖 AI Resume Review")
+        st.write(review)
