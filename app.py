@@ -3,37 +3,38 @@ from utils.pdf_reader import extract_text_from_pdf
 from services.gemini_service import review_resume
 
 st.set_page_config(
-    page_title="AI Resume Reviewer",
+    page_title="AI Resume Analyzer",
     page_icon="📄",
     layout="wide"
 )
 
-st.title("📄 AI Resume Reviewer")
-st.subheader("Built with Python + Streamlit + Gemini")
-
-st.write("Upload your resume and receive AI-powered feedback.")
+st.title("📄 AI Resume Analyzer")
+st.caption("Get ATS Score, Resume Score & Recruiter Feedback")
 
 uploaded_file = st.file_uploader(
-    "Choose your Resume (PDF)",
+    "Upload Your Resume (PDF)",
     type=["pdf"]
 )
 
 if uploaded_file:
+
     st.success("✅ Resume uploaded successfully!")
 
     resume_text = extract_text_from_pdf(uploaded_file)
 
-    st.subheader("📄 Extracted Resume Text")
+    with st.expander("📄 View Extracted Resume"):
+        st.text_area(
+            "",
+            resume_text,
+            height=300
+        )
 
-    st.text_area(
-        "Resume Content",
-        resume_text,
-        height=300
-    )
+    if st.button("🚀 Analyze Resume"):
 
-    if st.button("Review Resume with AI"):
-        with st.spinner("Analyzing your resume..."):
+        with st.spinner("Analyzing Resume..."):
+
             review = review_resume(resume_text)
 
-        st.subheader("🤖 AI Resume Review")
-        st.write(review)
+        st.success("Analysis Complete ✅")
+
+        st.markdown(review)
