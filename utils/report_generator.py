@@ -12,7 +12,7 @@ def create_pdf_report(report_text, filename="resume_analysis_report.pdf"):
 
 
     title = Paragraph(
-        "AI Resume Analyzer Report",
+        "AI Analyzer Report",
         styles["Title"]
     )
 

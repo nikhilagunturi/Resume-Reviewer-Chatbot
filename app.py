@@ -96,8 +96,6 @@ if uploaded_file:
                 review,
                 re.S
             )
-
-
             col1, col2 = st.columns(2)
 
 
@@ -109,7 +107,6 @@ if uploaded_file:
                     if resume_score else "N/A"
                 )
 
-
             with col2:
 
                 st.metric(
@@ -120,7 +117,6 @@ if uploaded_file:
 
 
             st.divider()
-
 
             # -----------------------------
             # Display AI Analysis
@@ -134,7 +130,6 @@ if uploaded_file:
             # -----------------------------
 
             pdf_file = create_pdf_report(review)
-
 
             with open(pdf_file, "rb") as file:
 
