@@ -6,83 +6,81 @@ from utils.pdf_reader import extract_text_from_pdf
 from services.gemini_service import review_resume
 
 
+# --------------------------------------------------
+# Page Configuration
+# --------------------------------------------------
+
 st.set_page_config(
     page_title="AI Resume Analyzer",
     page_icon="📄",
     layout="wide"
 )
 
-
-# -----------------------------
+# --------------------------------------------------
 # Header
-# -----------------------------
+# --------------------------------------------------
 
-st.title("📄 AI Resume Analyzer")
-st.caption(
-    "AI-powered ATS evaluation and recruiter feedback using Gemini"
-)
+st.title("AI Resume Analyzer")
+st.caption("Professional ATS Evaluation and Recruiter Feedback")
 
 st.divider()
 
-
-# -----------------------------
-# Upload Resume
-# -----------------------------
+# --------------------------------------------------
+# Resume Upload
+# --------------------------------------------------
 
 uploaded_file = st.file_uploader(
-    "📤 Upload Your Resume (PDF)",
+    "Upload Resume (PDF)",
     type=["pdf"]
 )
 
-
 if uploaded_file:
 
-    st.success("✅ Resume uploaded successfully!")
+    st.success("Resume uploaded successfully.")
 
     resume_text = extract_text_from_pdf(uploaded_file)
 
+    # --------------------------------------------------
+    # View Extracted Resume
+    # --------------------------------------------------
 
-    # Show extracted text
-
-    with st.expander("📄 View Extracted Resume Text"):
+    with st.expander("View Extracted Resume"):
 
         st.text_area(
-            "",
-            resume_text,
+            label="",
+            value=resume_text,
             height=300
         )
 
+    # --------------------------------------------------
+    # Analyze Button
+    # --------------------------------------------------
 
-    if st.button("🚀 Analyze Resume"):
+    if st.button("Analyze Resume"):
 
-
-        with st.spinner("🤖 AI is reviewing your resume..."):
+        with st.spinner("Analyzing resume..."):
 
             review = review_resume(resume_text)
 
+        st.success("Analysis completed successfully.")
 
-        st.success("✅ Analysis Completed!")
-
-
-        # -----------------------------
+        # --------------------------------------------------
         # Detect Non-Resume Documents
-        # -----------------------------
+        # --------------------------------------------------
 
         if "Document Type Detection" in review:
 
             st.warning(
-                "⚠️ This does not appear to be a professional resume."
+                "The uploaded document does not appear to be a professional resume."
             )
 
             st.markdown(review)
 
-
         else:
 
-
-            # -----------------------------
+            # --------------------------------------------------
             # Extract Scores
-            # -----------------------------
+            # --------------------------------------------------
 
             resume_score = re.search(
                 r"Overall Resume Score.*?(\d+)/100",
@@ -90,51 +88,50 @@ if uploaded_file:
                 re.S
             )
 
-
             ats_score = re.search(
                 r"ATS Score.*?(\d+)/100",
                 review,
                 re.S
             )
+
             col1, col2 = st.columns(2)
 
-
             with col1:
-
                 st.metric(
-                    "📊 Resume Score",
+                    "Resume Score",
                     resume_score.group(1) + "/100"
                     if resume_score else "N/A"
                 )
 
             with col2:
-
                 st.metric(
-                    "🤖 ATS Score",
+                    "ATS Score",
                     ats_score.group(1) + "/100"
                     if ats_score else "N/A"
                 )
 
-
             st.divider()
 
-            # -----------------------------
-            # Display AI Analysis
-            # -----------------------------
+            # --------------------------------------------------
+            # Resume Analysis Report
+            # --------------------------------------------------
+
+            st.subheader("Resume Analysis Report")
 
             st.markdown(review)
 
+            st.divider()
 
-            # -----------------------------
-            # Generate PDF Report
-            # -----------------------------
+            # --------------------------------------------------
+            # Download PDF Report
+            # --------------------------------------------------
 
             pdf_file = create_pdf_report(review)
 
             with open(pdf_file, "rb") as file:
 
                 st.download_button(
-                    label="📥 Download AI Report PDF",
+                    label="Download PDF Report",
                     data=file,
                     file_name="AI_Resume_Analysis_Report.pdf",
                     mime="application/pdf"

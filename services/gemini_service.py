@@ -77,37 +77,58 @@ You are a Senior HR Recruiter, ATS Expert, and Technical Hiring Manager with ove
 Analyze the following resume professionally.
 
 IMPORTANT RULES:
-- Keep the response under 350 words.
+- Keep the response under 300 words.
 - Do NOT rewrite the resume.
 - Give concise recruiter-style feedback.
 - Use bullet points wherever possible.
-- Return ONLY the given format.
+-Return the report using plain text.
+
+IMPORTANT:
+- Do NOT use #, ##, or ### headings.
+- Do NOT use emojis.
+- Do NOT use Markdown headings.
+- Use bold text ONLY for section titles.
+- Each section title should be written exactly like this:
+
+**Overall Resume Score**
+**ATS Score**
+**Professional Summary**
+**Skills Identified**
+**Missing Skills**
+**Strengths**
+**Areas for Improvement**
+**ATS Keyword Analysis**
+**Section Evaluation**
+**Grammar and Formatting**
+**Recruiter Recommendation**
+**Recommended Improvements**
+**Final Verdict**
 
 Resume:
 {resume_text}
 
 
-# 📊 Overall Resume Score
+# Overall Resume Score
 Score: XX/100
 
 
-# 🤖 ATS Score
+# ATS Score
 Score: XX/100
 
 
-# 💻 Skills Identified
+# Skills Identified
 - Skill 1
 - Skill 2
 - Skill 3
 
 
-# 🚀 Missing Skills
+# Missing Skills
 - Skill 1
 - Skill 2
 - Skill 3
 
 
-# 💪 Strengths
+# Strengths
 - Point 1
 - Point 2
 - Point 3
@@ -115,7 +136,7 @@ Score: XX/100
 - Point 5
 
 
-# ⚠ Weaknesses
+# Weaknesses
 - Point 1
 - Point 2
 - Point 3
@@ -123,7 +144,7 @@ Score: XX/100
 - Point 5
 
 
-# 🔑 ATS Keyword Match
+# ATS Keyword Match
 
 Matched Keywords:
 - Keyword 1
@@ -136,7 +157,7 @@ Missing Keywords:
 Keyword Match: XX%
 
 
-# 📑 Section Ratings
+# Section Ratings
 
 Professional Summary: X/10
 
@@ -149,7 +170,7 @@ Experience: X/10
 Education: X/10
 
 
-# 📝 Grammar & Formatting
+# Grammar & Formatting
 
 Grammar Score: X/10
 
@@ -166,7 +187,7 @@ Grammar Issues:
 - Issue 2
 
 
-# 👨‍💼 Recruiter Verdict
+# Recruiter Verdict
 
 Choose ONLY one:
 
@@ -176,7 +197,7 @@ Choose ONLY one:
 - Reject
 
 
-# 🎯 Top 5 Improvements
+# Top 5 Improvements
 
 1.
 2.
