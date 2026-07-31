@@ -1,14 +1,20 @@
 import os
+import streamlit as st
 from dotenv import load_dotenv
 from google import genai
+from google.genai.errors import ClientError
 
-# Load environment variables
+# Load .env (for local development)
 load_dotenv()
 
+# Read API key from .env first, then Streamlit Secrets
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    api_key = st.secrets.get("GEMINI_API_KEY", None)
+
 # Create Gemini client
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY")
-)
+client = genai.Client(api_key=api_key)
 
 
 def review_resume(resume_text):
@@ -28,18 +34,43 @@ RESUME
 ACADEMIC_TRANSCRIPT
 OTHER
 
-
 Document:
 {resume_text}
 """
 
-    check_response = client.models.generate_content(
-        model="gemini-flash-latest",
-        contents=check_prompt
-    )
+    try:
+        check_response = client.models.generate_content(
+            model="gemini-flash-latest",
+            contents=check_prompt
+        )
 
-    document_type = check_response.text.strip().upper()
+        document_type = check_response.text.strip().upper()
 
+    except ClientError:
+        return """
+## AI Service Temporarily Unavailable
+
+The AI Resume Analyzer is temporarily unavailable.
+
+This may happen because:
+
+• The Gemini API usage limit has been reached.
+• The AI service is temporarily unavailable.
+• There is a temporary connection issue.
+
+Please try again after some time.
+
+Thank you for your patience.
+"""
+
+    except Exception:
+        return """
+## AI Service Temporarily Unavailable
+
+An unexpected error occurred while connecting to the AI service.
+
+Please try again later.
+"""
 
     # -------------------------------
     # STEP 2: Reject Non-Resume Files
@@ -58,7 +89,7 @@ This document is not a professional resume.
 
 Please upload a proper resume containing:
 
-- Contact information
+- Contact Information
 - Professional Summary
 - Technical Skills
 - Projects
@@ -66,150 +97,44 @@ Please upload a proper resume containing:
 - Education
 """
 
-
     # -------------------------------
     # STEP 3: Resume Analysis
     # -------------------------------
 
     prompt = f"""
-You are a Senior HR Recruiter, ATS Expert, and Technical Hiring Manager with over 15 years of experience.
+    ...
+    """   # Keep your existing prompt exactly as it is.
 
-Analyze the following resume professionally.
+    try:
+        response = client.models.generate_content(
+            model="gemini-flash-latest",
+            contents=prompt
+        )
 
-IMPORTANT RULES:
-- Keep the response under 300 words.
-- Do NOT rewrite the resume.
-- Give concise recruiter-style feedback.
-- Use bullet points wherever possible.
--Return the report using plain text.
+        return response.text
 
-IMPORTANT:
-- Do NOT use #, ##, or ### headings.
-- Do NOT use emojis.
-- Do NOT use Markdown headings.
-- Use bold text ONLY for section titles.
-- Each section title should be written exactly like this:
+    except ClientError:
+        return """
+## AI Service Temporarily Unavailable
 
-**Overall Resume Score**
-**ATS Score**
-**Professional Summary**
-**Skills Identified**
-**Missing Skills**
-**Strengths**
-**Areas for Improvement**
-**ATS Keyword Analysis**
-**Section Evaluation**
-**Grammar and Formatting**
-**Recruiter Recommendation**
-**Recommended Improvements**
-**Final Verdict**
+The AI Resume Analyzer is temporarily unavailable.
 
-Resume:
-{resume_text}
+This may happen because:
 
+• The Gemini API usage limit has been reached.
+• The AI service is temporarily unavailable.
+• There is a temporary connection issue.
 
-# Overall Resume Score
-Score: XX/100
+Please try again after some time.
 
-
-# ATS Score
-Score: XX/100
-
-
-# Skills Identified
-- Skill 1
-- Skill 2
-- Skill 3
-
-
-# Missing Skills
-- Skill 1
-- Skill 2
-- Skill 3
-
-
-# Strengths
-- Point 1
-- Point 2
-- Point 3
-- Point 4
-- Point 5
-
-
-# Weaknesses
-- Point 1
-- Point 2
-- Point 3
-- Point 4
-- Point 5
-
-
-# ATS Keyword Match
-
-Matched Keywords:
-- Keyword 1
-- Keyword 2
-
-Missing Keywords:
-- Keyword 1
-- Keyword 2
-
-Keyword Match: XX%
-
-
-# Section Ratings
-
-Professional Summary: X/10
-
-Technical Skills: X/10
-
-Projects: X/10
-
-Experience: X/10
-
-Education: X/10
-
-
-# Grammar & Formatting
-
-Grammar Score: X/10
-
-Formatting Score: X/10
-
-
-Formatting Issues:
-- Issue 1
-- Issue 2
-
-
-Grammar Issues:
-- Issue 1
-- Issue 2
-
-
-# Recruiter Verdict
-
-Choose ONLY one:
-
-- Hire
-- Shortlist
-- Maybe
-- Reject
-
-
-# Top 5 Improvements
-
-1.
-2.
-3.
-4.
-5.
+Thank you for your patience.
 """
 
+    except Exception:
+        return """
+## AI Service Temporarily Unavailable
 
-    response = client.models.generate_content(
-        model="gemini-flash-latest",
-        contents=prompt
-    )
+An unexpected error occurred while generating the resume analysis.
 
-    return response.text
+Please try again later.
+"""

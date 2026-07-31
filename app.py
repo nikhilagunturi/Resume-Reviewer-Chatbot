@@ -16,6 +16,9 @@ st.set_page_config(
     layout="wide"
 )
 
+st.caption("Version: c3b39fc - UI updated")
+
+
 # --------------------------------------------------
 # Header
 # --------------------------------------------------
@@ -24,6 +27,7 @@ st.title("AI Resume Analyzer")
 st.caption("Professional ATS Evaluation and Recruiter Feedback")
 
 st.divider()
+
 
 # --------------------------------------------------
 # Resume Upload
@@ -62,6 +66,23 @@ if uploaded_file:
 
             review = review_resume(resume_text)
 
+        # --------------------------------------------------
+        # AI Service Error Handling
+        # --------------------------------------------------
+
+        if "AI Service Temporarily Unavailable" in review:
+
+            st.error("AI Service Temporarily Unavailable")
+
+            st.info(
+                "The AI service is temporarily unavailable due to API usage limits "
+                "or a temporary service issue. Please try again later."
+            )
+
+            st.markdown(review)
+
+            st.stop()
+
         st.success("Analysis completed successfully.")
 
         # --------------------------------------------------
@@ -97,6 +118,7 @@ if uploaded_file:
             col1, col2 = st.columns(2)
 
             with col1:
+
                 st.metric(
                     "Resume Score",
                     resume_score.group(1) + "/100"
@@ -104,6 +126,7 @@ if uploaded_file:
                 )
 
             with col2:
+
                 st.metric(
                     "ATS Score",
                     ats_score.group(1) + "/100"
