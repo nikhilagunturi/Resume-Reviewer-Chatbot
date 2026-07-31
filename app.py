@@ -89,7 +89,7 @@ if uploaded_file:
         # Detect Non-Resume Documents
         # --------------------------------------------------
 
-        if "Document Type Detection" in review:
+        if "DOCUMENT_TYPE: OTHER" in review:
 
             st.warning(
                 "The uploaded document does not appear to be a professional resume."
@@ -141,7 +141,8 @@ if uploaded_file:
 
             st.subheader("Resume Analysis Report")
 
-            st.markdown(review)
+            clean_review = review.replace("DOCUMENT_TYPE: RESUME", "").strip()
+            st.markdown(clean_review)
 
             st.divider()
 
@@ -149,7 +150,7 @@ if uploaded_file:
             # Download PDF Report
             # --------------------------------------------------
 
-            pdf_file = create_pdf_report(review)
+            pdf_file = create_pdf_report(clean_review)
 
             with open(pdf_file, "rb") as file:
 
